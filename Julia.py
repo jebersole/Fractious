@@ -17,7 +17,7 @@ class set:
         outOfBounds = steps
         for i in xrange(steps):
             z = z.squared().add(self.c)
-            if (z.magnitude() > 10)|(z.magnitude()==0):
+            if (z.magnitude() > 100)|(z.magnitude()==0):
                 outOfBounds = i
                 break
 
