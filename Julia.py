@@ -5,7 +5,7 @@ class set:
         self.c = comp
 
     def nextIteration(self,z):
-# this is defined to do the iteration step z=z²+c
+# this is defined to do the iteration step z=z^2+c
 # Before it was doing the calculations manually,
 # but that turns out not to be much of an optimisation,
 # so why make things harder?
@@ -17,7 +17,6 @@ class set:
         outOfBounds = steps
         for i in xrange(steps):
             z = z.squared().add(self.c)
-#            print z.magnitude()
             if (z.magnitude() > 10)|(z.magnitude()==0):
                 outOfBounds = i
                 break
