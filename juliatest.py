@@ -16,7 +16,6 @@ class JuliaSet(unittest.TestCase):
         c = Complex.Number(-0.8,0.156)
         j = Julia.set(c)
 
-        self.assertFalse(j.isMember(pointOne))
         self.assertTrue(j.isMember(pointOne,100))
 
     def testSimpleJulia(self):
