@@ -10,14 +10,14 @@ class set:
 # but that turns out not to be much of an optimisation,
 # so why make things harder?
         return z.squared().add(self.c)
-    
-    def isMember(self,z,steps=255):
+
+    def isMember(self,z,steps=20):
 # This function puts the number z through a few iterations to see if
 # it stays stable or runs away.
         outOfBounds = steps
         for i in xrange(steps):
             z = z.squared().add(self.c)
-            if (z.magnitude() > 10)|(z.magnitude()==0):
+            if (z.magnitude() > 100)|(z.magnitude()==0):
                 outOfBounds = i
                 break
 
