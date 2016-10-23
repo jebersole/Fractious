@@ -10,8 +10,8 @@ class set:
 # but that turns out not to be much of an optimisation,
 # so why make things harder?
         return z.squared().add(self.c)
-    
-    def isMember(self,z,steps=255):
+
+    def isMember(self,z,steps=20):
 # This function puts the number z through a few iterations to see if
 # it stays stable or runs away.
         outOfBounds = steps
