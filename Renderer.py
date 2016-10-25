@@ -18,7 +18,6 @@ class render:
         self.fr = args.fractal.lower()
         self.w = png.Writer(self.xpix, self.ypix, greyscale=True)
         self.pic = [[] for x in xrange(self.ypix)]
-        self.draw()
 
     def draw(self):
         # Draw fractal with vertical and horizontal values
