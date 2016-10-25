@@ -15,4 +15,4 @@ parser.add_argument('--complex', metavar='C', type=str, default='[0,0.8]',
                     help='complex number with which to draw fractal, e.g. [0,0.8]')
 args = parser.parse_args()
 
-r = Renderer.render(args)
+Renderer.render(args).draw()
