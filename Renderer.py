@@ -22,7 +22,7 @@ class Render:
         self.iters = iters[self.fr] if int(args.iters) == 0 else int(args.iters)
         self.f = open(args.file, 'wb')
         self.c = Complex.Number(self.xcom, self.ycom)
-        self.w = png.Writer(self.xpix, self.ypix, greyscale=True)
+        self.w = png.Writer(self.xpix, self.ypix, greyscale=False)
         self.pic = [[] for x in xrange(self.ypix)]
 
     def draw(self):
@@ -33,9 +33,12 @@ class Render:
                 c = Complex.Number(((self.range/self.xpix) * horiz) + self.pan,
                     ((self.range/self.xpix) * vert) + self.pan)
                 if self.fr.isMember(c, self.iters):
-                    self.pic[vert].append(255) # white
+                    self.pic[vert].append(0) # R
+                    self.pic[vert].append(0) # G
+                    self.pic[vert].append(255) # B
                 else:
-                    self.pic[vert].append(0) # black
-
+                    self.pic[vert].append(0) # R
+                    self.pic[vert].append(0) # G
+                    self.pic[vert].append(0) # B
         self.w.write(self.f, self.pic)
         self.f.close()
