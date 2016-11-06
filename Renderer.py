@@ -3,39 +3,50 @@
 import png
 import Complex
 import Julia
+import Mandelbrot
+import colorsys
 
 # Initialize fractal class and png writer
 class Render:
     def __init__(self, args):
         # Assign parameters from user-provided arguments
-        self.fr = args.fractal.lower()
-        self.zoom = float(args.zoom)
-        ranges = {'julia': 4.0, 'something': 2.6}
-        iters = {'julia': 20, 'something': 50}
-        self.range = ranges[self.fr] / self.zoom
+        # only Julia currently requires a complex init
+        if args.fractal.lower() == 'julia':
+            xcom = float(args.com[1: args.com.index(',')])
+            ycom = float(args.com[args.com.index(',') + 1: -1])
+            self.frac = Julia.set(Complex.Number(xcom, ycom))
+        else:
+            self.frac = Mandelbrot.set()
+        if args.zoom != 'default': self.frac.frange /= float(args.zoom)
         self.xpix = int(args.dim[: args.dim.index('x')])
         self.ypix = int(args.dim[args.dim.index('x') + 1:])
-        self.xcom = float(args.com[1: args.com.index(',')])
-        self.ycom = float(args.com[args.com.index(',') + 1: -1])
-        # default values are indicated with 0s
-        self.pan = -self.range / 2 if float(args.pan) == 0 else float(args.pan)
-        self.iters = iters[self.fr] if int(args.iters) == 0 else int(args.iters)
+        if args.pan == 'default':
+            self.panX = self.frac.panX
+            self.panY = self.frac.panY
+        else:
+            print(args.pan)
+            self.panX = float(args.pan[1: args.pan.index(',')])
+            self.panY = float(args.pan[args.pan.index(',') + 1: -1])
+        if args.iters != 'default': self.frac.iters = int(args.iters)
         self.f = open(args.file, 'wb')
-        self.c = Complex.Number(self.xcom, self.ycom)
-        self.w = png.Writer(self.xpix, self.ypix, greyscale=True)
+        self.w = png.Writer(self.xpix, self.ypix)
         self.pic = [[] for x in xrange(self.ypix)]
 
+    # Draw fractal with vertical and horizontal pixel values
     def draw(self):
-        # Draw fractal with vertical and horizontal values
-        self.fr = eval(self.fr.title()).set(self.c)
         for vert in range(self.xpix):
             for horiz in range(self.ypix):
-                c = Complex.Number(((self.range/self.xpix) * horiz) + self.pan,
-                    ((self.range/self.xpix) * vert) + self.pan)
-                if self.fr.isMember(c, self.iters):
-                    self.pic[vert].append(255) # white
+                c = Complex.Number( (self.frac.frange/self.xpix) * horiz + self.panX,
+                    (self.frac.frange/self.xpix) * vert + self.panY )
+                # if isMember returns True, point is inSet and color values provided
+                inSet, smoothColor = self.frac.isMember(c)
+                if inSet:
+                    # additional color adjustment
+                    colors = colorsys.hsv_to_rgb((self.frac.coloradj['base'] +
+                        (self.frac.coloradj['multiplier'] * smoothColor)), 1.0, 1.0)
+                    colors = [int(i*255) for i in colors]
+                    self.pic[vert].extend(colors)
                 else:
-                    self.pic[vert].append(0) # black
-
+                    self.pic[vert].extend([0,0,0]) # black
         self.w.write(self.f, self.pic)
         self.f.close()
