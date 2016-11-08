@@ -40,12 +40,13 @@ class set:
 
 # This returns an int between 0 and 250 suitable for colouring
 # a greyscale image. Should probably be refactored and made more general
-    def memberness(self,z,iters=25):
-        outOfBounds = self.iters
-        for i in xrange(iters):
-            z = self.nextIteration(z)
-            if (z.i**2 + z.r**2 > 9):
-                outOfBounds = i
-                break
-
-        return outOfBounds*10
+# Not currently in use.
+#   def memberness(self,z,iters=25):
+#       outOfBounds = self.iters
+#       for i in xrange(iters):
+#           z = self.nextIteration(z)
+#            if (z.i**2 + z.r**2 > 9):
+#               outOfBounds = i
+#                break
+#
+#       return outOfBounds*10
