@@ -28,7 +28,7 @@ for other tests. To measure test coverage, install `python-coverage` and run `py
 or something like `python-coverage --omit='/usr/local/lib/python2.7/dist-packages/*' -rm`.
 
 Current coverage output:
-'''
+```
 Name             Stmts   Miss  Cover   Missing
 ----------------------------------------------
 Arguer              14      1    93%   23
@@ -41,5 +41,5 @@ mandelbrottest      27      0   100%
 renderertest        37      0   100%   
 ----------------------------------------------
 TOTAL              205      1    99%  
-''' 
+```
 
