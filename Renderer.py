@@ -35,7 +35,7 @@ class Render:
                 if self.fr.isMember(c, self.iters):
                     self.pic[vert].append(0) # R
                     self.pic[vert].append(0) # G
-                    self.pic[vert].append(255) # B
+                    self.pic[vert].append(self.fr.memberness(c)) # B
                 else:
                     self.pic[vert].append(0) # R
                     self.pic[vert].append(0) # G
