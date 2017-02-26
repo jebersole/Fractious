@@ -11,20 +11,22 @@ class Render:
     def __init__(self, args):
         # Assign parameters from user-provided arguments
         # only Julia currently requires a complex init
+        '''
         if args.fractal.lower() == 'julia':
             xcom = float(args.com[1: args.com.index(',')])
             ycom = float(args.com[args.com.index(',') + 1: -1])
             self.frac = Julia.set(Complex.Number(xcom, ycom))
         else:
             self.frac = Mandelbrot.set()
-        if args.zoom != 'default': self.frac.frange /= float(args.zoom)
+        '''
         self.xpix = int(args.dim[: args.dim.index('x')])
         self.ypix = int(args.dim[args.dim.index('x') + 1:])
+        self.frac = KochSnowflake.set(xpix)
+        if args.zoom != 'default': self.frac.frange /= float(args.zoom)
         if args.pan == 'default':
             self.panX = self.frac.panX
             self.panY = self.frac.panY
         else:
-            print(args.pan)
             self.panX = float(args.pan[1: args.pan.index(',')])
             self.panY = float(args.pan[args.pan.index(',') + 1: -1])
         if args.iters != 'default': self.frac.iters = int(args.iters)
@@ -36,10 +38,10 @@ class Render:
     def draw(self):
         for vert in range(self.xpix):
             for horiz in range(self.ypix):
-                c = Complex.Number( (self.frac.frange/self.xpix) * horiz + self.panX,
-                    (self.frac.frange/self.xpix) * vert + self.panY )
+                #c = Complex.Number( (self.frac.frange/self.xpix) * horiz + self.panX,
+                #    (self.frac.frange/self.xpix) * vert + self.panY )
                 # if isMember returns True, point is inSet and color values provided
-                inSet, smoothColor = self.frac.isMember(c)
+                inSet, smoothColor = self.frac.isMember(horiz, vert)
                 if inSet:
                     # additional color adjustment
                     colors = colorsys.hsv_to_rgb((self.frac.coloradj['base'] +
