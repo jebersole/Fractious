@@ -4,6 +4,7 @@ import png
 import Complex
 import Julia
 import Mandelbrot
+import KochSnowflake
 import colorsys
 
 # Initialize fractal class and png writer
@@ -21,7 +22,7 @@ class Render:
         '''
         self.xpix = int(args.dim[: args.dim.index('x')])
         self.ypix = int(args.dim[args.dim.index('x') + 1:])
-        self.frac = KochSnowflake.set(xpix)
+        self.frac = KochSnowflake.set(self.xpix)
         if args.zoom != 'default': self.frac.frange /= float(args.zoom)
         if args.pan == 'default':
             self.panX = self.frac.panX
