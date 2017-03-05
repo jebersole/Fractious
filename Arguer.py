@@ -19,6 +19,6 @@ def Argue(param):
                         help='number of fractal iterations, e.g. 20')
     if param != "command_line":
         args = parser.parse_args(param)
-    else:
+    else: # pragma: no cover
         args = parser.parse_args()
     return args

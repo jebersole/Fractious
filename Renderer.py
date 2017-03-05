@@ -20,11 +20,10 @@ class Render:
         if args.zoom != 'default': self.frac.frange /= float(args.zoom)
         self.xpix = int(args.dim[: args.dim.index('x')])
         self.ypix = int(args.dim[args.dim.index('x') + 1:])
-        if args.pan == 'default':
+        if args.pan == 'default': # pragma: no cover
             self.panX = self.frac.panX
             self.panY = self.frac.panY
         else:
-            print(args.pan)
             self.panX = float(args.pan[1: args.pan.index(',')])
             self.panY = float(args.pan[args.pan.index(',') + 1: -1])
         if args.iters != 'default': self.frac.iters = int(args.iters)

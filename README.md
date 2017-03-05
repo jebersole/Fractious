@@ -3,8 +3,8 @@
 This is the world's best fractal generator. Fully unit-tested, with an MVC architecture.
 Currently, the Mandelbrot and Julia sets have been implemented.
 
-![Mandelbrot](mandelbrot.png?raw=true)
-![Julia](julia.png?raw=true)
+![Mandelbrot](assets/mandelbrot.png?raw=true)
+![Julia](assets/julia.png?raw=true)
 
 This program uses Python and pypng to create png images. Pypng can be installed in Linux with
 the command `pip install pypng`, or via https://github.com/drj11/pypng.
@@ -23,23 +23,23 @@ e.g. `python fracter.py julia test.png`. A variety of optional parameters are al
 
 ## Testing
 
-So far, tests have been implemented for Complex.py, Julia.py, Mandelbrot.py and Renderer.py. To test them, use `python complextest.py` and similar commands
-for other tests. To measure test coverage, install `python-coverage` and run `python-coverage -x complextest.py` followed by `python-coverage -rm -o /usr`,
-or something like `python-coverage --omit='/usr/local/lib/python2.7/dist-packages/*' -rm`.
+So far, tests have been implemented for Complex.py, Julia.py, Mandelbrot.py and Renderer.py. To test them, use `python -m unittest discover -v -s tests`
+from the root project directory. To measure test coverage, install `python-coverage` and run `python -m coverage run -m unittest discover -v -s tests`
+followed by something like `python -m coverage report --omit='/usr' -rm` or just `--omit='png.py'`
 
 Current coverage output:
 ```
-Name             Stmts   Miss  Cover   Missing
-----------------------------------------------
-Arguer              14      1    93%   23
-Complex             17      0   100%   
-Julia               24      0   100%   
-Mandelbrot          22      0   100%   
-Renderer            37      0   100%   
-juliatest           27      0   100%   
-mandelbrottest      27      0   100%   
-renderertest        37      0   100%   
-----------------------------------------------
-TOTAL              205      1    99%  
+Name                      Stmts   Miss  Cover
+---------------------------------------------
+Arguer.py                    13      0   100%
+Complex.py                   17      0   100%
+Julia.py                     24      0   100%
+Mandelbrot.py                22      0   100%
+Renderer.py                  33      0   100%
+tests\testcomplex.py         66      0   100%
+tests\testjulia.py           25      0   100%
+tests\testmandelbrot.py      25      0   100%
+tests\testrenderer.py        32      0   100%
+---------------------------------------------
+TOTAL                       257      0   100%
 ```
-
