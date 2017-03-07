@@ -33,8 +33,8 @@ class Render:
 
     # Draw fractal with vertical and horizontal pixel values
     def draw(self):
-        for vert in range(self.xpix):
-            for horiz in range(self.ypix):
+        for vert in range(self.ypix):
+            for horiz in range(self.xpix):
                 c = Complex.Number( (self.frac.frange/self.xpix) * horiz + self.panX,
                     (self.frac.frange/self.xpix) * vert + self.panY )
                 # if isMember returns True, point is inSet and color values provided
