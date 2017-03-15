@@ -5,8 +5,9 @@ class set:
         self.panX = -2.0
         self.panY = -2.0
         self.coloradj = {'base': 0.95, 'multiplier': 5}
-        triPoints = [size/3, size/3, 2*size/3, 2*size/3, 3*size/3, size/3]
-        self.generate(triPoints)
+        self.triPoints = [size/3, size/3, 2*size/3, 2*size/3, 3*size/3, size/3]
+        self.drawTriangle()
+        self.generate()
 
     def isMember(self, x, y):
         # self.frange should be useful
@@ -16,11 +17,23 @@ class set:
         else:
             return False, None
 
-    def generate(self, triPoints):
-        self.drawLine(triPoints[0], triPoints[1], triPoints[2], triPoints[3])
-        self.drawLine(triPoints[2], triPoints[3], triPoints[4], triPoints[5])
-        self.drawLine(triPoints[4], triPoints[5], triPoints[0], triPoints[1])
+    def generate(self):
+        for blah in range(0, 4):
+            deltaX = (self.triPoints[2] - self.triPoints[0])/3
+            deltaY = (self.triPoints[3] - self.triPoints[1])/3
+            self.triPoints[0] += deltaX
+            self.triPoints[1] += deltaY
+            self.triPoints[4] = self.triPoints[0] + deltaX
+            self.triPoints[5] = self.triPoints[1] + deltaY
+            self.triPoints[2] = self.triPoints[0] - (self.triPoints[4] - self.triPoints[0])
+            self.triPoints[3] = self.triPoints[1] + (self.triPoints[5] - self.triPoints[1])
+            print(self.triPoints)
+            self.drawTriangle()
 
+    def drawTriangle(self):
+        self.drawLine(self.triPoints[0], self.triPoints[1], self.triPoints[2], self.triPoints[3])
+        self.drawLine(self.triPoints[2], self.triPoints[3], self.triPoints[4], self.triPoints[5])
+        self.drawLine(self.triPoints[4], self.triPoints[5], self.triPoints[0], self.triPoints[1])
 
     def drawLine(self, startX, startY, endX, endY):
         # TODO: actually implement drawVerticalLine
@@ -43,7 +56,7 @@ class set:
                 self.setPixel(x, y)
         else: # slope >= 1
             for x in range(startX,endX):
-                y = int(round(startX + slope * (x - startX)))
+                y = int(round(startY + slope * (x - startX)))
                 self.setPixel(x, y)
 
     def drawVerticalLine(self,startX, startY, endY):
@@ -52,7 +65,7 @@ class set:
         else:
             step = 1
         for y in range(startY,endY, step):
-                self.setPixel(startX, y)
+            self.setPixel(startX, y)
 
     def setPixel(self,x,y):
         self.matrix[x][y] = 1
