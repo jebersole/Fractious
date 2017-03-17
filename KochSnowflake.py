@@ -34,7 +34,7 @@ class set:
         print(triPointsGen)
         #arr = range(2)
         #arr = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX/2, triPointsGen[1] + deltaX/2, deltaX * 3)
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX/2, triPointsGen[1] + deltaX/2, deltaX)
+        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX, triPointsGen[1] + deltaY)
         #print(arr)
         #triPointsGen[2] = arr[0]
         #triPointsGen[3] = arr[1]
@@ -66,16 +66,19 @@ class set:
         self.drawTriangle(triPointsGen)
         self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
 
+# Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
+    def findThirdPoint(self, Ax, Ay, Bx, By):
+        # We'll not bother with the trig every time
+        cosSixty = 0.5
+        sinSixty = math.sqrt(3)/2
 
-    def findThirdPoint(self, firstX, firstY, secondX, secondY, size):
-        for x in range(len(self.matrix)):
-            for y in range(len(self.matrix[0])):
-                if (math.sqrt((x - secondX)**2 + (y - secondY)**2 + (x - firstX)**2 + (y - firstY)**2) > size * 0.99 and
-                    math.sqrt((x - secondX)**2 + (y - secondY)**2 + (x - firstX)**2 + (y - firstY)**2) < size * 1.001 ):
-                    #print(size, math.sqrt((x - secondX)**2 + (y - secondY)**2 + (x - firstX)**2 + (y - firstY)**2))
-                #if ((x - secondX)**2 + (y - secondY)**2 + (x - firstX)**2 + (y - firstY)**2 > size): return [1,2]
-                #if (math.sqrt((x - secondX)**2 + (y - secondY)**2 + (x - firstX)**2 + (y - firstY)**2) == size):
-                    return [x, y]
+        deltaX = (Bx - Ax) * cosSixty + (Ay - By) * sinSixty
+        deltaY = (Bx - Ax) * sinSixty + (By - Ay) * cosSixty
+
+        Cx = Ax + deltaX
+        Cy = Ay + deltaY
+        
+        return [Cx, Cy]
 
     def removeLine(self, x1, y1, x2, y2):
         self.drawLine(x1, y1, x2, y2, True)
@@ -86,7 +89,11 @@ class set:
         self.drawLine(triPoints[4], triPoints[5], triPoints[0], triPoints[1], False)
 
     def drawLine(self, startX, startY, endX, endY, remove):
-        # TODO: actually implement drawVerticalLine
+        # In case we pass in non-integral pixels
+        startX=int(startX)
+        startY=int(startY)
+        endX=int(endX)
+        endY=int(endY)
         if endX==startX:
             self.drawVerticalLine(startX, startY, endY)
 
