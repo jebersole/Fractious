@@ -48,8 +48,9 @@ class set:
         triPointsGen[1] = triPoints[1]
         triPointsGen[4] = triPointsGen[0] + deltaX
         triPointsGen[5] = triPointsGen[1]
-        triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])
-        triPointsGen[3] = triPointsGen[1] - deltaX#(triPointsGen[5] - triPointsGen[1])
+        #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])
+        #triPointsGen[3] = triPointsGen[1] - deltaX#(triPointsGen[5] - triPointsGen[1])
+        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX, triPointsGen[1] + deltaY)
         print(triPointsGen)
         self.drawTriangle(triPointsGen)
         self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
@@ -58,10 +59,11 @@ class set:
         triPointsGen = range(6)
         triPointsGen[0] = triPoints[2] + deltaX
         triPointsGen[1] = triPoints[3] - deltaY
-        triPointsGen[4] = triPointsGen[0] + deltaX
-        triPointsGen[5] = triPointsGen[1] - deltaY
-        triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])/2
-        triPointsGen[3] = triPointsGen[1] + deltaY/2#abs((triPointsGen[5] - triPointsGen[1]))/2
+        triPointsGen[4] = triPoints[4] - deltaX
+        triPointsGen[5] = triPoints[5] - deltaY
+        #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])/2
+        #triPointsGen[3] = triPointsGen[1] + deltaY/2#abs((triPointsGen[5] - triPointsGen[1]))/2
+        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX, triPointsGen[1] + deltaY)
         print(triPointsGen)
         self.drawTriangle(triPointsGen)
         self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
@@ -77,7 +79,7 @@ class set:
 
         Cx = Ax + deltaX
         Cy = Ay + deltaY
-        
+
         return [Cx, Cy]
 
     def removeLine(self, x1, y1, x2, y2):
