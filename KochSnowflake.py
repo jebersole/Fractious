@@ -46,12 +46,12 @@ class set:
         deltaY = (triPoints[5] - triPoints[1])/3
         triPointsGen = range(6)
         triPointsGen[0] = triPoints[0] + deltaX
-        triPointsGen[1] = triPoints[1]
+        triPointsGen[1] = triPoints[1] + deltaY
         triPointsGen[4] = triPointsGen[0] + deltaX
-        triPointsGen[5] = triPointsGen[1]
+        triPointsGen[5] = triPointsGen[1] + deltaY
         #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])
         #triPointsGen[3] = triPointsGen[1] - deltaX#(triPointsGen[5] - triPointsGen[1])
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX, triPointsGen[1] + deltaY)
+        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[4], triPointsGen[5], triPointsGen[0], triPointsGen[1])
         print(triPointsGen)
         self.drawTriangle(triPointsGen)
         self.removeLine(triPointsGen[0], triPointsGen[1], triPointsGen[4], triPointsGen[5])
@@ -64,7 +64,7 @@ class set:
         triPointsGen[5] = triPoints[3] + 2*deltaY
         #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])/2
         #triPointsGen[3] = triPointsGen[1] + deltaY/2#abs((triPointsGen[5] - triPointsGen[1]))/2
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX, triPointsGen[1] + deltaY)
+        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[4], triPointsGen[5])
         print(triPointsGen)
         self.drawTriangle(triPointsGen)
         self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
