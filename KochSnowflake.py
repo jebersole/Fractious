@@ -20,55 +20,31 @@ class set:
             return False, None
 
     def generate(self, triPoints): #divide size by 3 each time, send to checkthird
-        #for tri in range(0, 3):
-        deltaX = (triPoints[2] - triPoints[0])/3
-        deltaY = (triPoints[3] - triPoints[1])/3
-        temp1 = triPoints[0]
-        temp2 = triPoints[1]
-        triPointsGen = range(6)
-        triPointsGen[0] = triPoints[0] + deltaX
-        triPointsGen[1] = triPoints[1] + deltaY
-        triPointsGen[4] = triPointsGen[0] + deltaX
-        triPointsGen[5] = triPointsGen[1] + deltaY
-        #triPointsGen[2] = triPointsGen[0] - (triPointsGen[4] - triPointsGen[0])
-        #triPointsGen[3] = triPointsGen[1] + (triPointsGen[5] - triPointsGen[1])
-        print(triPointsGen)
-        #arr = range(2)
-        #arr = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[0] + deltaX/2, triPointsGen[1] + deltaX/2, deltaX * 3)
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[4], triPointsGen[5])
-        #print(arr)
-        #triPointsGen[2] = arr[0]
-        #triPointsGen[3] = arr[1]
-        print(triPointsGen)
-        self.drawTriangle(triPointsGen)
-        self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
-        deltaX = (triPoints[4] - triPoints[0])/3
-        deltaY = (triPoints[5] - triPoints[1])/3
-        triPointsGen = range(6)
-        triPointsGen[0] = triPoints[0] + deltaX
-        triPointsGen[1] = triPoints[1] + deltaY
-        triPointsGen[4] = triPointsGen[0] + deltaX
-        triPointsGen[5] = triPointsGen[1] + deltaY
-        #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])
-        #triPointsGen[3] = triPointsGen[1] - deltaX#(triPointsGen[5] - triPointsGen[1])
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[4], triPointsGen[5], triPointsGen[0], triPointsGen[1])
-        print(triPointsGen)
-        self.drawTriangle(triPointsGen)
-        self.removeLine(triPointsGen[0], triPointsGen[1], triPointsGen[4], triPointsGen[5])
-        deltaX = (triPoints[4] - triPoints[2])/3
-        deltaY = (triPoints[5] - triPoints[3])/3
-        triPointsGen = range(6)
-        triPointsGen[0] = triPoints[2] + deltaX
-        triPointsGen[1] = triPoints[3] + deltaY
-        triPointsGen[4] = triPoints[2] + 2*deltaX
-        triPointsGen[5] = triPoints[3] + 2*deltaY
-        #triPointsGen[2] = triPointsGen[0] + deltaX/2#(triPointsGen[4] - triPointsGen[0])/2
-        #triPointsGen[3] = triPointsGen[1] + deltaY/2#abs((triPointsGen[5] - triPointsGen[1]))/2
-        triPointsGen[2], triPointsGen[3] = self.findThirdPoint(triPointsGen[0], triPointsGen[1], triPointsGen[4], triPointsGen[5])
-        print(triPointsGen)
-        self.drawTriangle(triPointsGen)
-        self.removeLine(temp1 + deltaX, temp2 + deltaY, temp1 + 2*deltaX, temp2 + 2*deltaY)
+        self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
+        self.replaceLine(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
+        self.replaceLine(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
 
+    def replaceLine(self, Ax, Ay, Bx, By):
+
+        middle = range(4)
+        peak = range(2)
+        
+        middle [0] = Ax + (Bx-Ax)/3
+        middle [1] = Ay + (By-Ay)/3
+        middle [2] = Ax + 2*(Bx-Ax)/3
+        middle [3] = Ay + 2*(By-Ay)/3
+
+        peak[0],peak[1] = self.findThirdPoint(middle[0],middle[1],middle[2],middle[3])
+
+        self.removeLine(Ax,Ay,Bx,By)
+
+        self.drawLine(Ax,Ay,middle[0],middle[1], False)
+        self.drawLine(middle[0],middle[1],peak[0],peak[1],False)
+        self.drawLine(middle[2],middle[3],peak[0],peak[1],False)
+        self.drawLine(middle[2],middle[3],Bx, By, False)
+        
+        return middle,peak
+    
 # Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
     def findThirdPoint(self, Ax, Ay, Bx, By):
         # We'll not bother with the trig every time
