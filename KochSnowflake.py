@@ -20,15 +20,21 @@ class set:
             return False, None
 
     def generate(self, triPoints): #divide size by 3 each time, send to checkthird
-        self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
-        self.replaceLine(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
-        self.replaceLine(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
+        points1 = self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
+        points2 = self.replaceLine(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
+        points3 = self.replaceLine(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
+        self.replaceLine(points1[0],points1[1],points1[2],points1[3])
+        self.replaceLine(points1[0],points1[1],points1[4],points1[5])
+        self.replaceLine(points2[0],points2[1],points2[2],points2[3])
+        self.replaceLine(points2[0],points2[1],points2[4],points2[5])
+        self.replaceLine(points3[0],points3[1],points3[2],points3[3])
+        self.replaceLine(points3[0],points3[1],points3[4],points3[5])
 
     def replaceLine(self, Ax, Ay, Bx, By):
 
         middle = range(4)
         peak = range(2)
-        
+
         middle [0] = Ax + (Bx-Ax)/3
         middle [1] = Ay + (By-Ay)/3
         middle [2] = Ax + 2*(Bx-Ax)/3
@@ -42,9 +48,9 @@ class set:
         self.drawLine(middle[0],middle[1],peak[0],peak[1],False)
         self.drawLine(middle[2],middle[3],peak[0],peak[1],False)
         self.drawLine(middle[2],middle[3],Bx, By, False)
-        
-        return middle,peak
-    
+
+        return [peak[0], peak[1], middle[0], middle[1], middle[2], middle[3]]
+
 # Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
     def findThirdPoint(self, Ax, Ay, Bx, By):
         # We'll not bother with the trig every time
