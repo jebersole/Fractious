@@ -23,12 +23,21 @@ class set:
         points1 = self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
         points2 = self.replaceLine(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
         points3 = self.replaceLine(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
-        self.replaceLine(points1[0],points1[1],points1[2],points1[3])
-        self.replaceLine(points1[0],points1[1],points1[4],points1[5])
-        self.replaceLine(points2[0],points2[1],points2[2],points2[3])
-        self.replaceLine(points2[0],points2[1],points2[4],points2[5])
-        self.replaceLine(points3[0],points3[1],points3[2],points3[3])
-        self.replaceLine(points3[0],points3[1],points3[4],points3[5])
+        #newTri1, newTri2, newTri3 = 
+        points4 = self.replaceLine(triPoints[0],triPoints[1], points1[2],points1[3])
+        points5 = self.replaceLine(points2[4],points2[5], triPoints[0],triPoints[1])
+        points6 = self.replaceLine(triPoints[4],triPoints[5], points2[2],points2[3])
+        points7 = self.replaceLine(points3[4],points3[5], triPoints[4],triPoints[5])
+        points8 = self.replaceLine(triPoints[2], triPoints[3], points3[2], points3[3])
+        points9 = self.replaceLine(points1[4], points1[5], triPoints[2], triPoints[3])
+
+        self.replaceLine(points1[0],points1[1], points1[4],points1[5])
+        self.replaceLine(points1[2],points1[3], points1[0],points1[1])
+        self.replaceLine(points2[0],points2[1], points2[4],points2[5])
+        self.replaceLine(points2[2],points2[3], points2[0],points2[1])
+        self.replaceLine(points3[0],points3[1], points3[4],points3[5])
+        self.replaceLine(points3[2],points3[3], points3[0],points3[1])
+
 
     def replaceLine(self, Ax, Ay, Bx, By):
 
