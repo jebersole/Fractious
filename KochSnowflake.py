@@ -6,9 +6,16 @@ class set:
         self.panX = -2.0
         self.panY = -2.0
         self.coloradj = {'base': 0.95, 'multiplier': 5}
-        triPoints = [size/3, size/3, 2*size/3, 2*size/3, 3*size/3, size/3]
+        triPoints = [size/6, size/6, 2*size/6, 2*size/6, 3*size/6, size/6]
         triPoints[2],triPoints[3] = self.findThirdPoint(triPoints[0],triPoints[1],triPoints[4],triPoints[5])
         self.drawTriangle(triPoints)
+        Mx,My,Px,Py,Tx,Ty = self.crinkle(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
+        self.drawLine(Mx,My,Px,Py,False)
+        self.drawLine(Px,Py,Tx,Ty,False)
+        Mx,My,Px,Py,Tx,Ty = self.crinkle(Mx,My,Px,Py)
+        self.drawLine(Mx,My,Px,Py,False)
+        self.drawLine(Px,Py,Tx,Ty,False)
+
         self.generate(triPoints, 1)
 
     def isMember(self, x, y):
@@ -78,14 +85,26 @@ class set:
         return [peak[0], peak[1], middle[0], middle[1], middle[2], middle[3]]
 
     def iterativeKoch(self,startX,startY,endX,endY):
-        if (startX-endX)**2 + (startY-endY)**2 < 36:
-            self.drawLine(startX,endX,startY,endY,False)
+        Ax,Ay,Bx,By,Cx,Cy = self.crinkle(startX,startY,endX,endY)
+        if self.distance(Ax,Ay,Bx,By) < 10:
+            self.drawLine(startX,endX,Ax,Ay,False)
+            self.drawLine(Ax,Ay,Bx,By,False)
+            self.drawLine(Bx,By,Cx,Cy,False)
+            self.drawLine(Cx,Cy,endX,endY,False)
         else:
-            Ax,Ay,Bx,By,Cx, Cy = self.crinkle(startX,startY,endX,endY)
             self.iterativeKoch(startX,startY,Ax,Ay)
             self.iterativeKoch(Ax,Ay,Bx,By)
             self.iterativeKoch(Bx,By,Cx,Cy)
             self.iterativeKoch(Cx,Cy,endX,endY)
+
+#        self.iterativeKoch(startX,startY,Ax,Ay)
+#        self.iterativeKoch(Ax,Ay,Bx,By)
+#        self.iterativeKoch(Bx,By,Cx,Cy)
+#        self.iterativeKoch(Cx,Cy,endX,endY)
+
+
+    def distance(self,Ax,Ay,Bx,By):
+        return math.sqrt((Ax-Bx)**2 + (Ay-By)**2)
 
     def crinkle(self, Ax, Ay, Bx, By):
 
