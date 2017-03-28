@@ -18,8 +18,12 @@ class set:
             return True, smoothColor
         else:
             return False, None
-
-    def generate(self, triPoints, level): #divide size by 3 each time, send to checkthird
+    def generate(self, triPoints, level):
+        self.iterativeKoch(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
+        self.iterativeKoch(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
+        self.iterativeKoch(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
+        
+    def Ngenerate(self, triPoints, level): #divide size by 3 each time, send to checkthird
         if (level < 3):
             print(level)
             points1 = self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
@@ -73,6 +77,31 @@ class set:
 
         return [peak[0], peak[1], middle[0], middle[1], middle[2], middle[3]]
 
+    def iterativeKoch(self,startX,startY,endX,endY):
+        if (startX-endX)**2 + (startY-endY)**2 < 36:
+            self.drawLine(startX,endX,startY,endY,False)
+        else:
+            Ax,Ay,Bx,By,Cx, Cy = self.crinkle(startX,startY,endX,endY)
+            self.iterativeKoch(startX,startY,Ax,Ay)
+            self.iterativeKoch(Ax,Ay,Bx,By)
+            self.iterativeKoch(Bx,By,Cx,Cy)
+            self.iterativeKoch(Cx,Cy,endX,endY)
+
+    def crinkle(self, Ax, Ay, Bx, By):
+
+        # takes coordinates for ______, returns coordinates for __/\__
+        middle = range(4)
+        peak = range(2)
+
+        middle [0] = Ax + (Bx-Ax)/3
+        middle [1] = Ay + (By-Ay)/3
+        middle [2] = Ax + 2*(Bx-Ax)/3
+        middle [3] = Ay + 2*(By-Ay)/3
+
+        peak[0],peak[1] = self.findThirdPoint(middle[0],middle[1],middle[2],middle[3])
+        
+        return middle[0], middle[1], peak[0], peak[1], middle[2], middle[3]
+
 # Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
     def findThirdPoint(self, Ax, Ay, Bx, By):
         # We'll not bother with the trig every time
@@ -86,6 +115,20 @@ class set:
         Cy = Ay + deltaY
 
         return [Cx, Cy]
+    
+    def rotateLine(self, Ax, Ay, Bx, By, angle):
+        cosine = math.cos(2*math.pi*angle/360)
+        sine = math.sin(2*math.pi*angle/360)
+
+        deltaX = (Bx - Ax) * cosine + (Ay - By) * sine
+        deltaY = (Bx - Ax) * sine + (By - Ay) * cosine
+
+        Cx = Ax + deltaX
+        Cy = Ay + deltaY
+
+        return [Cx, Cy]
+        
+        
 
     def removeLine(self, x1, y1, x2, y2):
         self.drawLine(x1, y1, x2, y2, True)
@@ -103,6 +146,7 @@ class set:
         endY=int(endY)
         if endX==startX:
             self.drawVerticalLine(startX, startY, endY)
+            return
 
         if endX < startX:
             startX, endX = endX,startX
@@ -135,7 +179,7 @@ class set:
         else:
             step = 1
         for y in range(startY,endY, step):
-            self.setPixel(startX, y)
+            self.setPixel(startX, y, False)
 
     def setPixel(self,x,y, remove):
         if (remove):
