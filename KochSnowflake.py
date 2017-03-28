@@ -6,17 +6,11 @@ class set:
         self.panX = -2.0
         self.panY = -2.0
         self.coloradj = {'base': 0.95, 'multiplier': 5}
-        triPoints = [size/6, size/6, 2*size/6, 2*size/6, 3*size/6, size/6]
-        triPoints[2],triPoints[3] = self.findThirdPoint(triPoints[0],triPoints[1],triPoints[4],triPoints[5])
-        self.drawTriangle(triPoints)
-        Mx,My,Px,Py,Tx,Ty = self.crinkle(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
-        self.drawLine(Mx,My,Px,Py,False)
-        self.drawLine(Px,Py,Tx,Ty,False)
-        Mx,My,Px,Py,Tx,Ty = self.crinkle(Mx,My,Px,Py)
-        self.drawLine(Mx,My,Px,Py,False)
-        self.drawLine(Px,Py,Tx,Ty,False)
 
-        self.generate(triPoints, 1)
+        iterations = 7
+        triPoints = [size/3, size/3, 2*size/3, 2*size/3, 3*size/3, size/3]
+        triPoints[2],triPoints[3] = self.findThirdPoint(triPoints[0],triPoints[1],triPoints[4],triPoints[5])
+        self.generate(triPoints, iterations)
 
     def isMember(self, x, y):
         # self.frange should be useful
@@ -25,101 +19,43 @@ class set:
             return True, smoothColor
         else:
             return False, None
-    def generate(self, triPoints, level):
-        self.iterativeKoch(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
-        self.iterativeKoch(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
-        self.iterativeKoch(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
+
+    def generate(self, triPoints, iterations):
+        self.iterativeKoch(triPoints[0],triPoints[1],triPoints[2],triPoints[3],iterations)
+        self.iterativeKoch(triPoints[2],triPoints[3],triPoints[4],triPoints[5],iterations)
+        self.iterativeKoch(triPoints[4],triPoints[5],triPoints[0],triPoints[1],iterations)
         
-    def Ngenerate(self, triPoints, level): #divide size by 3 each time, send to checkthird
-        if (level < 3):
-            print(level)
-            points1 = self.replaceLine(triPoints[0],triPoints[1],triPoints[2],triPoints[3])
-            points2 = self.replaceLine(triPoints[4],triPoints[5],triPoints[0],triPoints[1])
-            points3 = self.replaceLine(triPoints[2],triPoints[3],triPoints[4],triPoints[5])
+    def iterativeKoch(self,startX,startY,endX,endY,iters):
+        sx = 1.0 * startX
+        sy = 1.0 * startY
+        ex = 1.0 * endX
+        ey = 1.0 * endY
 
-            points4 = self.replaceLine(triPoints[0],triPoints[1], points1[2],points1[3])
-            points5 = self.replaceLine(points2[4],points2[5], triPoints[0],triPoints[1])
-            points6 = self.replaceLine(triPoints[4],triPoints[5], points2[2],points2[3])
-            points7 = self.replaceLine(points3[4],points3[5], triPoints[4],triPoints[5])
-            points8 = self.replaceLine(triPoints[2], triPoints[3], points3[2], points3[3])
-            points9 = self.replaceLine(points1[4], points1[5], triPoints[2], triPoints[3])
-
-            points10 = self.replaceLine(points1[0],points1[1], points1[4],points1[5])
-            points11 = self.replaceLine(points1[2],points1[3], points1[0],points1[1])
-            points12 = self.replaceLine(points2[0],points2[1], points2[4],points2[5])
-            points13 = self.replaceLine(points2[2],points2[3], points2[0],points2[1])
-            points14 = self.replaceLine(points3[0],points3[1], points3[4],points3[5])
-            points15 = self.replaceLine(points3[2],points3[3], points3[0],points3[1])
-
-            newPoints = [points1, points2, points3, points4, points5, points6, points7, points8, points9, points10,
-                points11, points12, points13, points14, points15]
-            for x in range(len(newPoints)):
-                peak1 = newPoints[x][0]
-                peak2 = newPoints[x][1]
-                newPoints[x][0] = newPoints[x][2]
-                newPoints[x][1] = newPoints[x][3]
-                newPoints[x][2] = peak1
-                newPoints[x][3] = peak2
-                self.generate(newPoints[x], level + 1)
-
-
-    def replaceLine(self, Ax, Ay, Bx, By):
-
-        middle = range(4)
-        peak = range(2)
-
-        middle [0] = Ax + (Bx-Ax)/3
-        middle [1] = Ay + (By-Ay)/3
-        middle [2] = Ax + 2*(Bx-Ax)/3
-        middle [3] = Ay + 2*(By-Ay)/3
-
-        peak[0],peak[1] = self.findThirdPoint(middle[0],middle[1],middle[2],middle[3])
-
-        self.removeLine(Ax,Ay,Bx,By)
-
-        self.drawLine(Ax,Ay,middle[0],middle[1], False)
-        self.drawLine(middle[0],middle[1],peak[0],peak[1],False)
-        self.drawLine(middle[2],middle[3],peak[0],peak[1],False)
-        self.drawLine(middle[2],middle[3],Bx, By, False)
-
-        return [peak[0], peak[1], middle[0], middle[1], middle[2], middle[3]]
-
-    def iterativeKoch(self,startX,startY,endX,endY):
-        Ax,Ay,Bx,By,Cx,Cy = self.crinkle(startX,startY,endX,endY)
-        if self.distance(Ax,Ay,Bx,By) < 10:
-            self.drawLine(startX,endX,Ax,Ay,False)
-            self.drawLine(Ax,Ay,Bx,By,False)
-            self.drawLine(Bx,By,Cx,Cy,False)
-            self.drawLine(Cx,Cy,endX,endY,False)
+        if iters < 1 :
+            self.drawLine(sx,sy,ex,ey,False)
         else:
-            self.iterativeKoch(startX,startY,Ax,Ay)
-            self.iterativeKoch(Ax,Ay,Bx,By)
-            self.iterativeKoch(Bx,By,Cx,Cy)
-            self.iterativeKoch(Cx,Cy,endX,endY)
-
-#        self.iterativeKoch(startX,startY,Ax,Ay)
-#        self.iterativeKoch(Ax,Ay,Bx,By)
-#        self.iterativeKoch(Bx,By,Cx,Cy)
-#        self.iterativeKoch(Cx,Cy,endX,endY)
+            iters = iters - 1
+            Ax,Ay,Bx,By,Cx,Cy = self.crinkle(sx,sy,ex,ey)
+            self.iterativeKoch(sx,sy,Ax,Ay,iters)
+            self.iterativeKoch(Ax,Ay,Bx,By,iters)
+            self.iterativeKoch(Bx,By,Cx,Cy,iters)
+            self.iterativeKoch(Cx,Cy,ex,ey,iters)
 
 
     def distance(self,Ax,Ay,Bx,By):
         return math.sqrt((Ax-Bx)**2 + (Ay-By)**2)
 
+# take coordinates for the line ______, return coordinates for the middle of  __/\__
     def crinkle(self, Ax, Ay, Bx, By):
-
-        # takes coordinates for ______, returns coordinates for __/\__
-        middle = range(4)
-        peak = range(2)
-
-        middle [0] = Ax + (Bx-Ax)/3
-        middle [1] = Ay + (By-Ay)/3
-        middle [2] = Ax + 2*(Bx-Ax)/3
-        middle [3] = Ay + 2*(By-Ay)/3
-
-        peak[0],peak[1] = self.findThirdPoint(middle[0],middle[1],middle[2],middle[3])
         
-        return middle[0], middle[1], peak[0], peak[1], middle[2], middle[3]
+        middleAx = Ax + (Bx-Ax)/3
+        middleAy = Ay + (By-Ay)/3
+        middleBx = Ax + 2*(Bx-Ax)/3
+        middleBy = Ay + 2*(By-Ay)/3
+
+        peakX,peakY = self.findThirdPoint(middleAx,middleAy,middleBx,middleBy)
+        
+        return middleAx, middleAy, peakX, peakY, middleBx, middleBy
 
 # Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
     def findThirdPoint(self, Ax, Ay, Bx, By):
@@ -134,7 +70,8 @@ class set:
         Cy = Ay + deltaY
 
         return [Cx, Cy]
-    
+
+# Take start and end coordinates of a line, return new end point if you rotate that line widdershins around the start point by $angle in degrees
     def rotateLine(self, Ax, Ay, Bx, By, angle):
         cosine = math.cos(2*math.pi*angle/360)
         sine = math.sin(2*math.pi*angle/360)
@@ -146,17 +83,7 @@ class set:
         Cy = Ay + deltaY
 
         return [Cx, Cy]
-        
-        
-
-    def removeLine(self, x1, y1, x2, y2):
-        self.drawLine(x1, y1, x2, y2, True)
-
-    def drawTriangle(self, triPoints):
-        self.drawLine(triPoints[0], triPoints[1], triPoints[2], triPoints[3], False)
-        self.drawLine(triPoints[2], triPoints[3], triPoints[4], triPoints[5], False)
-        self.drawLine(triPoints[4], triPoints[5], triPoints[0], triPoints[1], False)
-
+                
     def drawLine(self, startX, startY, endX, endY, remove):
         # In case we pass in non-integral pixels
         startX=int(startX)
