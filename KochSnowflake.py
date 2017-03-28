@@ -1,4 +1,6 @@
 import math
+import cmath
+
 class set:
     def __init__(self, size):
         self.frange = size
@@ -6,10 +8,10 @@ class set:
         self.panX = -2.0
         self.panY = -2.0
         self.coloradj = {'base': 0.95, 'multiplier': 5}
-
+        size = size - 20
         iterations = 7
-        triPoints = [size/3, size/3, 2*size/3, 2*size/3, 3*size/3, size/3]
-        triPoints[2],triPoints[3] = self.findThirdPoint(triPoints[0],triPoints[1],triPoints[4],triPoints[5])
+        triPoints = [complex(size/3, size/3), complex(2*size/3, 2*size/3), complex(3*size/3, size/3)]
+        triPoints[1] = self.findThirdPoint(triPoints[0],triPoints[2])
         self.generate(triPoints, iterations)
 
     def isMember(self, x, y):
@@ -21,75 +23,51 @@ class set:
             return False, None
 
     def generate(self, triPoints, iterations):
-        self.iterativeKoch(triPoints[0],triPoints[1],triPoints[2],triPoints[3],iterations)
-        self.iterativeKoch(triPoints[2],triPoints[3],triPoints[4],triPoints[5],iterations)
-        self.iterativeKoch(triPoints[4],triPoints[5],triPoints[0],triPoints[1],iterations)
-        
-    def iterativeKoch(self,startX,startY,endX,endY,iters):
-        sx = 1.0 * startX
-        sy = 1.0 * startY
-        ex = 1.0 * endX
-        ey = 1.0 * endY
-
+        for x in range(0,len(triPoints)):
+            self.iterativeKoch(triPoints[x],triPoints[(x+1)%len(triPoints)],iterations)
+            
+    def iterativeKoch(self,start,end,iters):
         if iters < 1 :
-            self.drawLine(sx,sy,ex,ey,False)
+            self.drawLine(start,end,False)
         else:
             iters = iters - 1
-            Ax,Ay,Bx,By,Cx,Cy = self.crinkle(sx,sy,ex,ey)
-            self.iterativeKoch(sx,sy,Ax,Ay,iters)
-            self.iterativeKoch(Ax,Ay,Bx,By,iters)
-            self.iterativeKoch(Bx,By,Cx,Cy,iters)
-            self.iterativeKoch(Cx,Cy,ex,ey,iters)
+            A,B,C = self.crinkle(start, end)
+            points = [start, A, B, C, end] # this shape: __/\__
+            for n in range(0,len(points)-1): # for each sub-line in it
+                self.iterativeKoch(points[n],points[n+1],iters)
 
+    def distance(self,A,B):
+        return abs(A-B)
 
-    def distance(self,Ax,Ay,Bx,By):
-        return math.sqrt((Ax-Bx)**2 + (Ay-By)**2)
-
-# take coordinates for the line ______, return coordinates for the middle of  __/\__
-    def crinkle(self, Ax, Ay, Bx, By):
+# take coordinates for the line A______B, return coordinates for the middle of  __/\__
+    def crinkle(self, A, B):
         
-        middleAx = Ax + (Bx-Ax)/3
-        middleAy = Ay + (By-Ay)/3
-        middleBx = Ax + 2*(Bx-Ax)/3
-        middleBy = Ay + 2*(By-Ay)/3
-
-        peakX,peakY = self.findThirdPoint(middleAx,middleAy,middleBx,middleBy)
+        middleNear = A + (B - A)/3
+        middleFar = A + 2 * (B - A)/3
+        peak = self.findThirdPoint(middleNear,middleFar)
         
-        return middleAx, middleAy, peakX, peakY, middleBx, middleBy
+        return middleNear, peak, middleFar
 
-# Use a 2D rotation matrix to determine the third point from A and B, rotating anticlockwise by 60 degrees
-    def findThirdPoint(self, Ax, Ay, Bx, By):
-        # We'll not bother with the trig every time
-        cosSixty = 0.5
-        sinSixty = math.sqrt(3)/2
+# Use a 2D complex rotation to determine the third point from A and B, rotating anticlockwise by 60 degrees
+    def findThirdPoint(self, A, B):
+        return self.rotateLine(A,B,60)
 
-        deltaX = (Bx - Ax) * cosSixty + (Ay - By) * sinSixty
-        deltaY = (Bx - Ax) * sinSixty + (By - Ay) * cosSixty
+# Take start and end coordinates of a complex line, return new end point if you rotate that line widdershins around the start point by $angle in degrees
+    def rotateLine(self, A, B, angleDeg):
+        angleRad = math.pi*angleDeg/180
 
-        Cx = Ax + deltaX
-        Cy = Ay + deltaY
-
-        return [Cx, Cy]
-
-# Take start and end coordinates of a line, return new end point if you rotate that line widdershins around the start point by $angle in degrees
-    def rotateLine(self, Ax, Ay, Bx, By, angle):
-        cosine = math.cos(2*math.pi*angle/360)
-        sine = math.sin(2*math.pi*angle/360)
-
-        deltaX = (Bx - Ax) * cosine + (Ay - By) * sine
-        deltaY = (Bx - Ax) * sine + (By - Ay) * cosine
-
-        Cx = Ax + deltaX
-        Cy = Ay + deltaY
-
-        return [Cx, Cy]
+        delta = (B - A) * cmath.exp(1j * angleRad)
+        
+        C = A + delta
+        
+        return C
                 
-    def drawLine(self, startX, startY, endX, endY, remove):
+    def drawLine(self, start, end, remove):
         # In case we pass in non-integral pixels
-        startX=int(startX)
-        startY=int(startY)
-        endX=int(endX)
-        endY=int(endY)
+        startX=int(start.real)
+        startY=int(start.imag)
+        endX=int(end.real)
+        endY=int(end.imag)
         if endX==startX:
             self.drawVerticalLine(startX, startY, endY)
             return
