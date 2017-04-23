@@ -9,39 +9,28 @@ class set:
         self.panY = -2.0
         self.coloradj = {'base': 0.95, 'multiplier': 5}
         self.matrix = [[0 for x in range(size)] for y in range(size)]
-        size = size/3
+        size = size/4
         # draw three kissing circles of equal radius
         c1 = circle(complex(170 - size/2, 170), size/2, "blue")
         c2 = circle(complex(170 + size/2, 170), size/2, "blue")
         c3y = self.getY(170 + size/2, 170, 170, size/2, size/2)
-        c3 = circle(complex(170, c3y), size/2, "blue")
+        c3 = circle(complex(170, 170 + size * math.sqrt(3)/2.0), size/2, "blue")
         for item in [c1, c2, c3]: self.drawCircle(item)
         # smaller circle between the three
         inni, outi = self.apollonianCircles(c1,c2,c3)
         self.drawCircle(inni)
         self.drawCircle(outi)
-        k = 1.0/c3.r
-        r = int(round(1.0/(self.getK(k, k, k, True))))
-        innerCoords = self.getXY(c1.z.real, c1.z.imag, c2.z.real, c2.z.imag, c3.z.real, c3.z.imag, c3.r, -r)
-        inner = circle(complex(innerCoords[0], innerCoords[1]), r, "blue")
-#        self.drawCircle(inner)
-        # outer, largest circle
-        k2 = self.getK(k,k,k,False)
-        outer = circle(complex(inner.z.real, inner.z.imag), -int(round(1.0/k2)), "blue")
- #       self.drawCircle(outer)
-        # medium-sized circle between biggest circle and two of original 3 kissing circles
-        k3 = self.getK(k,k,k2,True)
-        mediumCoords = self.getXY(c1.z.real, c1.z.imag, c3.z.real, c3.z.imag, outer.z.real, outer.z.imag, outer.z.real, int(round(1.0/k3)))
-        medium = circle(complex(mediumCoords[0], mediumCoords[1]), int(round(1.0/k3)), "blue")
-#        self.drawCircle(medium)
-
         med1,med2 = self.apollonianCircles(c1,c3,outi)
         self.drawCircle(med1)
         self.drawCircle(med2)
 
         med3, med4 = self.apollonianCircles(c1,c3,inni)
-#        self.drawCircle(med3)
-#        self.drawCircle(med4)
+        self.drawCircle(med3)
+        self.drawCircle(med4)
+
+        med5, med6 = self.apollonianCircles(med1,c1,outi)
+        self.drawCircle(med5)
+        self.drawCircle(med6)
         
     def getY(self, x1, y1, x2, r1, r2):
         y2 = math.sqrt((r1 + r2)**2 - (x1 - x2)**2) - y1
