@@ -1,6 +1,6 @@
 import math
-#import Complex
-
+import Complex
+#from ApollonianGasket import circle
 class set:
     def __init__(self, size):
         self.panX = -2.0
@@ -8,53 +8,29 @@ class set:
         self.coloradj = {'base': 0.95, 'multiplier': 5}
         self.matrix = [[0 for x in range(size)] for y in range(size)]
         size = size/3
-        #y = math.sqrt((size/2 + size/2)**2 - (170 + size/2 - 170)**2) - 170
-        #y = int(round(y * -1))
-        y = self.getY(170 + size/2, 170, 170, size/2, size/2)
-        #self.drawCircle(170,170,size,"blue")
-        self.drawCircle(170 - size/2, 170, size/2,"blue")
-        self.drawCircle(170 + size/2, 170, size/2,"blue")
-        self.drawCircle(170, y, size/2,"blue")
-        '''
-        thirdR = int(round((1/(2/(math.sqrt(size/2))))**2))
-        print(thirdR)
-        self.drawCircle(170, 170 + 3*thirdR, thirdR,"blue")
-        '''
-        print(size, size/2, 1.0/(size/2))
-        k = 1.0/(size/2)
-        #k4 = 3.0*k + 2.0*(math.sqrt(3.0*(k**2.0))) # or -
-        k4 = self.getK(k,k,k,True)
-        r = int(round(1.0/k4))
-        print(k, k4, r)
-        y2 = self.getY(170, y, 170, size/2, r)
-        self.drawCircle(170, y2 + size + 2*r, r, "blue")
-        #k4 = 3.0*k - 2.0*(math.sqrt(3.0*(k**2.0))) # or -
-        k5 = self.getK(k,k,k,False)
-        r = int(round(1.0/k5)) * -1
-        print(k, k5, r)
-        #y3 = self.getY(170, y, 170, size/2, -r)
-        y3 = self.getY(170 - size/2, 170, 170, size/2, -r)
-        self.drawCircle(170, y3, r, "blue")
-        #self.generate
-        k4 = self.getK(k,k,k,False)
-        k6 = self.getK(k,k,k4,True)
-        r = int(round(1.0/k6))
-        print(k, k6, r)
-        #y4 = self.getY(170 - size/2, 170, 170)
-        x = self.getX(size/2, size/2)
-        y = self.getY(170 - size/2, 170, x, size/2, r)
-        x,y = self.getXY(170-size/2,170,x,size/2,size/2,size/2,size,r)
-        self.drawCircle(x, y, r, "a")
-
-    def getX(self, r1, r2):
-        #x2 = math.sqrt((r1 + r2)**2 - (y1 + y2)**2) - x1
-        #x2 = int(round(x2 * -1))
-        x3 = (2*r1*(math.sqrt(r2)))/(math.sqrt(r1) + math.sqrt(r2))
-        return int(round(x3)) #* -1
+        # draw three kissing circles of equal radius
+        c1 = circle(170 - size/2, 170, size/2, "blue")
+        c2 = circle(170 + size/2, 170, size/2, "blue")
+        c3y = self.getY(170 + size/2, 170, 170, size/2, size/2)
+        c3 = circle(170, c3y, size/2, "blue")
+        for item in [c1, c2, c3]: self.drawCircle(item)
+        # smaller circle between the three
+        k = 1.0/c3.r
+        r = int(round(1.0/(self.getK(k, k, k, True))))
+        innerCoords = self.getXY(c1.z.r, c1.z.i, c2.z.r, c2.z.i, c3.z.r, c3.z.i, c3.r, -r)
+        inner = circle(innerCoords[0], innerCoords[1], r, "blue")
+        self.drawCircle(inner)
+        # outer, largest circle
+        k2 = self.getK(k,k,k,False)
+        outer = circle(inner.z.r, inner.z.i, -int(round(1.0/k2)), "blue")
+        self.drawCircle(outer)
+        # medium-sized circle between biggest circle and two of original 3 kissing circles
+        k3 = self.getK(k,k,k2,True)
+        mediumCoords = self.getXY(c1.z.r, c1.z.i, c3.z.r, c3.z.i, outer.z.r, outer.z.i, outer.z.r, int(round(1.0/k3)))
+        medium = circle(mediumCoords[0], mediumCoords[1], int(round(1.0/k3)), "blue")
+        self.drawCircle(medium)
 
     def getY(self, x1, y1, x2, r1, r2):
-        #x2 = x2 * -1.0
-        print(x1,y1,x2,r1,r2)
         y2 = math.sqrt((r1 + r2)**2 - (x1 - x2)**2) - y1
         y2 = int(round(y2 * -1))
         return y2
@@ -85,14 +61,6 @@ class set:
         newY = bY + (distance * deltaY)
 
         return newX,newY
-        
-
-        
-    def getK(self, k1, k2, k3, plus):
-        if (plus):
-            return k1 + k2 + k3 + 2*math.sqrt(k1*k2 + k2*k3 + k3*k1)
-        else:
-            return k1 + k2 + k3 - 2*math.sqrt(k1*k2 + k2*k3 + k3*k1)
 
     def isMember(self, x, y):
         # self.frange should be useful
@@ -102,11 +70,18 @@ class set:
         else:
             return False, None
 
-    #def Circle(self, x, y, r, color):
-        #return Complex.Number(x, y)
+
+    def setPixel(self, x, y):
+        x = int(x)
+        y = int(y)
+        self.matrix[x][y] = 1
 
     # From https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-    def drawCircle(self, x0, y0, r, color):
+    def drawCircle(self, circle):
+        x0 = circle.z.r
+        y0 = circle.z.i
+        r = circle.r
+        #circle.color...
         x = r
         y = 0
         err = 0
@@ -128,7 +103,14 @@ class set:
                 x -= 1
                 err -= 2*x + 1
 
-    def setPixel(self, x, y):
-        x = int(x)
-        y = int(y)
-        self.matrix[x][y] = 1
+    def getK(self, k1, k2, k3, plus):
+        if (plus):
+            return k1 + k2 + k3 + 2*math.sqrt(k1*k2 + k2*k3 + k3*k1)
+        else:
+            return k1 + k2 + k3 - 2*math.sqrt(k1*k2 + k2*k3 + k3*k1)
+
+class circle:
+    def __init__(self, x, y, r, color):
+        self.z = Complex.Number(x, y)
+        self.r = r
+        self.color = color
