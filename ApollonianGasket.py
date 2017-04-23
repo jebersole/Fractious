@@ -1,5 +1,7 @@
 import math
 import Complex
+import cmath
+
 #from ApollonianGasket import circle
 class set:
     def __init__(self, size):
@@ -9,25 +11,25 @@ class set:
         self.matrix = [[0 for x in range(size)] for y in range(size)]
         size = size/3
         # draw three kissing circles of equal radius
-        c1 = circle(170 - size/2, 170, size/2, "blue")
-        c2 = circle(170 + size/2, 170, size/2, "blue")
+        c1 = circle(complex(170 - size/2, 170), size/2, "blue")
+        c2 = circle(complex(170 + size/2, 170), size/2, "blue")
         c3y = self.getY(170 + size/2, 170, 170, size/2, size/2)
-        c3 = circle(170, c3y, size/2, "blue")
+        c3 = circle(complex(170, c3y), size/2, "blue")
         for item in [c1, c2, c3]: self.drawCircle(item)
         # smaller circle between the three
         k = 1.0/c3.r
         r = int(round(1.0/(self.getK(k, k, k, True))))
-        innerCoords = self.getXY(c1.z.r, c1.z.i, c2.z.r, c2.z.i, c3.z.r, c3.z.i, c3.r, -r)
-        inner = circle(innerCoords[0], innerCoords[1], r, "blue")
+        innerCoords = self.getXY(c1.z.real, c1.z.imag, c2.z.real, c2.z.imag, c3.z.real, c3.z.imag, c3.r, -r)
+        inner = circle(complex(innerCoords[0], innerCoords[1]), r, "blue")
         self.drawCircle(inner)
         # outer, largest circle
         k2 = self.getK(k,k,k,False)
-        outer = circle(inner.z.r, inner.z.i, -int(round(1.0/k2)), "blue")
+        outer = circle(complex(inner.z.real, inner.z.imag), -int(round(1.0/k2)), "blue")
         self.drawCircle(outer)
         # medium-sized circle between biggest circle and two of original 3 kissing circles
         k3 = self.getK(k,k,k2,True)
-        mediumCoords = self.getXY(c1.z.r, c1.z.i, c3.z.r, c3.z.i, outer.z.r, outer.z.i, outer.z.r, int(round(1.0/k3)))
-        medium = circle(mediumCoords[0], mediumCoords[1], int(round(1.0/k3)), "blue")
+        mediumCoords = self.getXY(c1.z.real, c1.z.imag, c3.z.real, c3.z.imag, outer.z.real, outer.z.imag, outer.z.real, int(round(1.0/k3)))
+        medium = circle(complex(mediumCoords[0], mediumCoords[1]), int(round(1.0/k3)), "blue")
         self.drawCircle(medium)
 
     def getY(self, x1, y1, x2, r1, r2):
@@ -62,6 +64,26 @@ class set:
 
         return newX,newY
 
+    def zk(self, circle):
+        # this convenience function returns the complex coordinate multiplied by the
+        # curvature for the circle
+        return circle.z/circle.r
+    
+    def apollonianCircles(self, c1,c2,c3):
+        # this function uses Descartes' Complex Theorem to
+        # return the two Apollonian circles for three mutually-tangential
+        # circles. We don't check that the circles actually are mutually-tangential
+        k4 = getK(1/c1.r,1/c2.r,1/c3.r, True)
+        k5 = getK(1/c1.r,1/c2.r,1/c3.r, False)
+        
+        base = (zk(c1) + zk(c2) + zk(c3))
+        delta = 2 * cmath.sqrt(zk(c1)*zk(c2) + zk(c2)*zk(c3) + zk(c3)*zk(c1))
+
+        circle4 = circle((base + delta)/k4, 1/k4, "blue")
+        circle5 = circle((base - delta)/k5, 1/k5, "blue")
+
+        return circle4, circle5
+
     def isMember(self, x, y):
         # self.frange should be useful
         smoothColor = 1
@@ -78,8 +100,8 @@ class set:
 
     # From https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
     def drawCircle(self, circle):
-        x0 = circle.z.r
-        y0 = circle.z.i
+        x0 = circle.z.real
+        y0 = circle.z.imag
         r = circle.r
         #circle.color...
         x = r
@@ -110,7 +132,12 @@ class set:
             return k1 + k2 + k3 - 2*math.sqrt(k1*k2 + k2*k3 + k3*k1)
 
 class circle:
-    def __init__(self, x, y, r, color):
-        self.z = Complex.Number(x, y)
+    def __init__(self, z, r, color):
+        self.z = z
         self.r = r
         self.color = color
+
+    def K(self): # I hope this terrible one-letter function name is OK
+        return 1.0/self.r # in context
+
+        
