@@ -37,33 +37,6 @@ class set:
         y2 = int(round(y2 * -1))
         return y2
 
-    def getXY(self, sX1, sY1, sX2, sY2, bX, bY, bR, newR):
-        # this function will return x,y coordinates for
-        # the centre of a circle which is located between
-        # two smaller circles and the edge of a larger one
-        # s* are the centres of the smaller circles
-        # b* are the coords and radius of the big one
-        # the newR of the circle is calculated elsewhere
-
-        midX = (sX1 + sX2)/2.0 # find the midpoint between the two circles
-        midY = (sY1 + sY2)/2.0 # the new centre will lie on the line
-                               # between that and the big centre
-
-        deltaX = midX-bX       # find the direction from big centre
-        deltaY = midY-bY
-
-        scale = 1/math.sqrt(deltaX**2 + deltaY**2) # normalise that vector
-
-        deltaX = deltaX * scale # make the length one
-        deltaY = deltaY * scale # so that we can multiply it later
-
-        distance = bR - newR # how far is the new centre from the big centre?
-
-        newX = bX + (distance * deltaX)
-        newY = bY + (distance * deltaY)
-
-        return newX,newY
-
     def zk(self, circle):
         # this convenience function returns the complex coordinate multiplied by the
         # curvature for the circle
