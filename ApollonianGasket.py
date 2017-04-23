@@ -43,6 +43,7 @@ class set:
         #y4 = self.getY(170 - size/2, 170, 170)
         x = self.getX(size/2, size/2)
         y = self.getY(170 - size/2, 170, x, size/2, r)
+        x,y = self.getXY(170-size/2,170,x,size/2,size/2,size/2,size,r)
         self.drawCircle(x, y, r, "a")
 
     def getX(self, r1, r2):
@@ -73,7 +74,7 @@ class set:
         deltaX = midX-bX       # find the direction from big centre
         deltaY = midY-bY
 
-        scale = 1/sqrt(deltaX**2 + deltaY**2) # normalise that vector
+        scale = 1/math.sqrt(deltaX**2 + deltaY**2) # normalise that vector
 
         deltaX = deltaX * scale # make the length one
         deltaY = deltaY * scale # so that we can multiply it later
@@ -128,4 +129,6 @@ class set:
                 err -= 2*x + 1
 
     def setPixel(self, x, y):
-            self.matrix[x][y] = 1
+        x = int(x)
+        y = int(y)
+        self.matrix[x][y] = 1
