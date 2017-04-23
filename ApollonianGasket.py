@@ -85,8 +85,26 @@ class set:
         newY = bY + (distance * deltaY)
 
         return newX,newY
-        
 
+    def zk(self, circle):
+        # this convenience function returns the complex coordinate multiplied by the
+        # curvature for the circle
+        return circle.z/circle.r
+    
+    def apollonianCircles(self, c1,c2,c3):
+        # this function uses Descartes' Complex Theorem to
+        # return the two Apollonian circles for three mutually-tangential
+        # circles. We don't check that the circles actually are mutually-tangential
+        k4 = getK(1/c1.r,1/c2.r,1/c3.r, True)
+        k5 = getK(1/c1.r,1/c2.r,1/c3.r, False)
+        
+        base = (zk(c1) + zk(c2) + zk(c3))
+        delta = 2 * math.sqrt(zk(c1)*zk(c2) + zk(c2)*zk(c3) + zk(c3)*zk(c1))
+
+        circle4 = circle((base + delta)/k4, 1/k4)
+        circle5 = circle((base - delta)/k5, 1/k5)
+
+        return circle4, circle5
         
     def getK(self, k1, k2, k3, plus):
         if (plus):
