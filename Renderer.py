@@ -7,6 +7,7 @@ import Mandelbrot
 import KochSnowflake
 import ApollonianGasket
 import colorsys
+import random
 
 # Initialize fractal class and png writer
 class Render:
@@ -35,6 +36,7 @@ class Render:
         self.f = open(args.file, 'wb')
         self.w = png.Writer(self.xpix, self.ypix)
         self.pic = [[] for x in xrange(self.ypix)]
+        self.colorMap = {"yellow":[255,255,0],"blue":[0,0,255],"red":[255,0,0],"green":[0,255,0],"orange":[255,121,0],"indigo":[75,0,130],"violet":[249,192,255]}
 
     # Draw fractal with vertical and horizontal pixel values
     def draw(self):
@@ -46,9 +48,10 @@ class Render:
                 inSet, smoothColor = self.frac.isMember(horiz, vert)
                 if inSet:
                     # additional color adjustment
-                    colors = colorsys.hsv_to_rgb((self.frac.coloradj['base'] +
-                        (self.frac.coloradj['multiplier'] * smoothColor)), 1.0, 1.0)
-                    colors = [int(i*255) for i in colors]
+                    #colors = colorsys.hsv_to_rgb((self.frac.coloradj['base'] +
+                    #    (self.frac.coloradj['multiplier'] * smoothColor)), 1.0, 1.0)
+                    colors = self.colorMap[smoothColor]
+                    #colors = [int(i*255) for i in colors]
                     self.pic[vert].extend(colors)
                 else:
                     self.pic[vert].extend([0,0,0]) # black
